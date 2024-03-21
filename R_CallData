@@ -1,0 +1,51 @@
+##Setworking Directory
+getwd()
+setwd("C:/Users/Kirubaharan P/OneDrive - Dealer Owned Warranty Company/Kiruba/Process backups/Working/Test")
+
+##Import data from path
+calldata<-read.csv(file.choose(),header = T,sep = ",")
+
+library("lubridate")
+CALL.TIME.FORMAT<-lubridate::hms(calldata$CALL.TIME)
+IVR.TIME.FORMAT<-lubridate::hms(calldata$IVR.TIME)
+RING.TIME.FORMAT<-lubridate::hms(calldata$RING.TIME)
+TALK.TIME.FORMAT<-lubridate::hms(calldata$TALK.TIME)
+HOLD.TIME.FORMAT<-lubridate::hms(calldata$HOLD.TIME)
+PARK.TIME.FORMAT<-lubridate::hms(calldata$PARK.TIME)
+AFTER.CALL.WORK.TIME.FORMAT<-lubridate::hms(calldata$AFTER.CALL.WORK.TIME)
+
+##To change to Seconds
+CALL.TIME.SEC<-period_to_seconds(CALL.TIME.FORMAT)
+IVR.TIME.SEC<-period_to_seconds(IVR.TIME.FORMAT)
+RING.TIME.SEC<-period_to_seconds(RING.TIME.FORMAT)
+TALK.TIME.SEC<-period_to_seconds(TALK.TIME.FORMAT)
+HOLD.TIME.SEC<-period_to_seconds(HOLD.TIME.FORMAT)
+PARK.TIME.SEC<-period_to_seconds(PARK.TIME.FORMAT)
+AFTER.CALL.WORK.TIME.SEC<-period_to_seconds(AFTER.CALL.WORK.TIME.FORMAT)
+
+##Combine columns
+Calldata1<-cbind(calldata,CALL.TIME.SEC,IVR.TIME.SEC,RING.TIME.SEC,TALK.TIME.SEC,HOLD.TIME.SEC,PARK.TIME.SEC,AFTER.CALL.WORK.TIME.SEC)
+
+##Arrange the columns
+Calldata2<-Calldata1[,c(1,2,3,4,5,25,6,26,7,27,8,28,9,29,10,30,11,31,12,13,14,15,16,17,18,19,20,21,22,23,24)]
+
+library("DBI")
+library("RSQLite")
+library("dbplyr")
+library("RPostgreSQL")
+
+##ConnectDB
+RPostgreSQL::PostgreSQL()
+
+##Input the below details
+DBName=
+DBHost=
+DBPort=
+DBUser=
+DBPassword=
+
+ConDB<-dbConnect(RPostgreSQL::PostgreSQL(), dbname=DBName,user=DBUser,password=DBPassword,port=DBPort,host=DBHost)
+
+##Create table and import in PGadmin
+dbCreateTable(ConDB,Id(Schema='kiruba',table="Test_Calldata"),fields = Calldata2)
+dbAppendTable(ConDB,Id(Schema='kiruba',table="Test_Calldata"),values =Calldata2)

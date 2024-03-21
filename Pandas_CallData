@@ -1,0 +1,46 @@
+##Import Pandas
+import pandas as pd
+import sqlalchemy
+from sqlalchemy import create_engine
+import psycopg2
+##Input DB details
+dbstring = "postgresql://user name:password@server/DBName" 
+connection = create_engine(dbstring).connect()
+
+##Import csv file
+df=pd.read_csv(r'C:\Users\Kirubaharan P\Desktop\Working\Python\Call Data New.csv')
+
+##Change datatype to Datetime
+df["DATE"]=pd.to_datetime(df["DATE"])
+df["CALL TIME SEC"]=pd.to_datetime(df["CALL TIME"])
+df["IVR TIME SEC"]=pd.to_datetime(df["IVR TIME"])
+df["RING TIME SEC"]=pd.to_datetime(df["RING TIME"])
+df["TALK TIME SEC"]=pd.to_datetime(df["TALK TIME"])
+df["HOLD TIME SEC"]=pd.to_datetime(df["HOLD TIME"])
+df["PARK TIME SEC"]=pd.to_datetime(df["PARK TIME"])
+df["AFTER CALL WORK TIME SEC"]=pd.to_datetime(df["AFTER CALL WORK TIME"])
+
+
+##Convert to Seconds
+df["CALL TIME SEC"]=(df["CALL TIME SEC"].dt.hour*3600)+(df["CALL TIME SEC"].dt.minute*60)+(df["CALL TIME SEC"].dt.second)
+df["IVR TIME SEC"]=(df["IVR TIME SEC"].dt.hour*3600)+(df["IVR TIME SEC"].dt.minute*60)+(df["IVR TIME SEC"].dt.second)
+df["RING TIME SEC"]=(df["RING TIME SEC"].dt.hour*3600)+(df["RING TIME SEC"].dt.minute*60)+(df["RING TIME SEC"].dt.second)
+df["TALK TIME SEC"]=(df["TALK TIME SEC"].dt.hour*3600)+(df["TALK TIME SEC"].dt.minute*60)+(df["TALK TIME SEC"].dt.second)
+df["HOLD TIME SEC"]=(df["HOLD TIME SEC"].dt.hour*3600)+(df["HOLD TIME SEC"].dt.minute*60)+(df["HOLD TIME SEC"].dt.second)
+df["PARK TIME SEC"]=(df["PARK TIME SEC"].dt.hour*3600)+(df["PARK TIME SEC"].dt.minute*60)+(df["PARK TIME SEC"].dt.second)
+df["AFTER CALL WORK TIME SEC"]=(df["AFTER CALL WORK TIME SEC"].dt.hour*3600)+(df["AFTER CALL WORK TIME SEC"].dt.minute*60)+(df["AFTER CALL WORK TIME SEC"].dt.second)
+
+df["CALL TIME SEC"]=df["CALL TIME SEC"].fillna(0)
+df["IVR TIME SEC"]=df["IVR TIME SEC"].fillna(0)
+df["RING TIME SEC"]=df["RING TIME SEC"].fillna(0)
+df["TALK TIME SEC"]=df["TALK TIME SEC"].fillna(0)
+df["HOLD TIME SEC"]=df["HOLD TIME SEC"].fillna(0)
+df["PARK TIME SEC"]=df["PARK TIME SEC"].fillna(0)
+df["AFTER CALL WORK TIME SEC"]=df["AFTER CALL WORK TIME SEC"].fillna(0)
+df['DISPOSITION']=df['DISPOSITION'].fillna('N/A')
+
+##Rearrange the Columns
+Order=['CAMPAIGN', 'CALL TYPE', 'AGENT', 'DISPOSITION', 'CALL TIME', 'CALL TIME SEC', 'IVR TIME', 'IVR TIME SEC', 'RING TIME', 'RING TIME SEC', 'TALK TIME', 'TALK TIME SEC', 'HOLD TIME', 'HOLD TIME SEC', 'PARK TIME', 'PARK TIME SEC', 'AFTER CALL WORK TIME', 'AFTER CALL WORK TIME SEC', 'TRANSFERS', 'CONFERENCES', 'ABANDONED', 'DATE', 'HOUR', 'AGENT ID', 'AGENT LAST NAME', 'AGENT FIRST NAME', 'CALLS', 'SKILL', 'DISPOSITION GROUP A', 'CAMPAIGN TYPE', 'AGENT GROUP']
+df=df[Order]
+
+df.to_sql('Test_Calldata',dbstring,schema='kiruba',if_exists='append',index =False)

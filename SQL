@@ -1,0 +1,6 @@
+Alter table name:
+alter table report."HistoricalContracts" rename to "historical_contracts"
+
+Alter column name:
+alter table report.historical_contracts rename column
+"ContractId" to "contract_id" 

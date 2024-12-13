@@ -1,0 +1,15 @@
+import pandas as pd
+df=pd.read_csv('C:\\Users\\KirubaharanPurushoth\\Downloads\\test.csv')
+df.head()
+#check the datatype
+df.info()
+check = ['Audi Oakland', 'Audi Palo Alto']
+if (df['Name'].dtype == 'object') and (df['Name'].isin(check).any()):
+    df = df.rename(columns={'Name': 'Dealer Name'})
+idcheck = [3464809, 3464991]
+if (df['Id'].dtype == 'int64') and (df['Id'].isin(idcheck).any()):
+    df = df.rename(columns={'Id': 'DealerId'})
+pcheck = ['Ancillary Service Contracts','Financial Protection','Service Contracts']
+if (df['P'].dtype == 'object') and (df['P'].isin(pcheck).any()):
+    df = df.rename(columns={'P': 'ProductCategory'})
+print(df)
